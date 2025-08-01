@@ -153,9 +153,6 @@ python manage.py test projects.tests --verbosity=2
 - Issue در GitHub ایجاد کنید
 - ایمیل: your-email@example.com
 
-## 🙏 تشکر
-
-از تمام کسانی که در توسعه این پروژه مشارکت کرده‌اند تشکر می‌کنیم.
 
 ---
 
