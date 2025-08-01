@@ -1,0 +1,43 @@
+{% load jalali_filters %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>داشبورد کاربر</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link href="https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'base_style.css' %}">
+</head>
+<body>
+<div class="container p-4 text-center fade-in">
+    <h2 class="mb-4"><i class="bi bi-person"></i> داشبورد کاربر</h2>
+    <p>خوش آمدید <strong>{{ request.user.username }}</strong>!</p>
+    {% if projects %}
+        <h4 class="mt-4"><i class="bi bi-list-task"></i> پروژه‌های من</h4>
+        <ul class="list-group mb-4">
+        {% for project in projects %}
+            <li class="list-group-item d-flex justify-content-between align-items-center fade-in" style="animation-delay: {{ forloop.counter0|add:1 }}00ms;">
+                <span><i class="bi bi-folder2-open"></i> {{ project.name }}</span>
+                <span class="text-muted small"><i class="bi bi-calendar3"></i> {{ project.start_date|to_jalali }}{% if project.end_date %} تا {{ project.end_date|to_jalali }}{% endif %}</span>
+                {% if not project.is_done %}
+                    <form method="post" action="{% url 'mark-project-done' project.pk %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success btn-sm btn-modern ms-2">انجام شد</button>
+                    </form>
+                {% else %}
+                    <span class="badge bg-success">انجام شده</span>
+                {% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <div class="alert alert-info mt-4 fade-in"><i class="bi bi-info-circle"></i> هیچ پروژه‌ای به شما منسوب نشده است.</div>
+    {% endif %}
+    <a href="/" class="btn btn-outline-secondary btn-modern mt-3"><i class="bi bi-house"></i> بازگشت به صفحه اصلی</a>
+    <a href="/logout/" class="btn btn-outline-danger btn-modern mt-3"><i class="bi bi-box-arrow-right"></i> خروج</a>
+</div>
+</body>
+</html>

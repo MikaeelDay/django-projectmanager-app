@@ -1,0 +1,81 @@
+{% load jalali_filters %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>صفحه اصلی سایت مدیریت پروژه</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'base_style.css' %}">
+    
+</head>
+<body>
+<div class="container bg-white p-4 fade-in">
+    <h1 class="mb-4 text-center"><i class="bi bi-kanban"></i> سیستم مدیریت پروژه</h1>
+    {% if user.is_authenticated and user.is_superuser %}
+        <div class="alert alert-success d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-person-check"></i> شما به عنوان ادمین وارد شده‌اید.</span>
+            <span>
+                <a href="/dashboard/" class="btn btn-sm btn-primary ripple">داشبورد ادمین</a>
+                <a href="/logout/" class="btn btn-sm btn-outline-danger ms-2 ripple">خروج</a>
+            </span>
+        </div>
+    {% elif user.is_authenticated %}
+        <div class="alert alert-info d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-person"></i> خوش آمدید {{ user.username }}!</span>
+            <span>
+                <a href="/user-dashboard/" class="btn btn-sm btn-outline-primary ripple">پروفایل</a>
+                <a href="/logout/" class="btn btn-sm btn-outline-danger ms-2 ripple">خروج</a>
+            </span>
+        </div>
+    {% else %}
+        <div class="mb-3 text-end">
+            <a href="/login/" class="btn btn-outline-primary ripple ms-2"><i class="bi bi-box-arrow-in-right"></i> ورود</a>
+            <a href="/signup/" class="btn btn-outline-success ripple"><i class="bi bi-person-plus"></i> ثبت‌نام</a>
+        </div>
+    {% endif %}
+    {% if projects %}
+        <h4 class="mt-4"><i class="bi bi-list-task"></i> لیست پروژه‌ها</h4>
+        <ul class="list-group project-list mb-0">
+        {% for project in projects %}
+            <li class="list-group-item d-flex justify-content-between align-items-center fade-in" style="animation-delay: {{ forloop.counter0|add:1 }}00ms;">
+                <a href="{% url 'project-detail' project.pk %}" class="fw-bold text-decoration-none"><i class="bi bi-folder2-open"></i> {{ project.name }}</a>
+                <span class="text-muted small"><i class="bi bi-calendar3"></i> {{ project.start_date|to_jalali }}{% if project.end_date %} تا {{ project.end_date|to_jalali }}{% endif %}</span>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <div class="alert alert-info mt-4 fade-in"><i class="bi bi-info-circle"></i> هیچ پروژه‌ای ثبت نشده است.</div>
+    {% endif %}
+    <div id="toast-success" class="toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-4" role="alert" aria-live="assertive" aria-atomic="true" style="z-index:9999;display:none;">
+      <div class="d-flex">
+        <div class="toast-body">
+          <i class="bi bi-check-circle"></i> عملیات با موفقیت انجام شد!
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+</div>
+<script>
+// Ripple effect for buttons
+const rippleBtns = document.querySelectorAll('.ripple');
+rippleBtns.forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    let ripple = document.createElement('span');
+    ripple.className = 'ripple';
+    this.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+  });
+});
+// Toast example (call showSuccessToast() after successful action)
+function showSuccessToast() {
+  const toast = document.getElementById('toast-success');
+  toast.style.display = 'block';
+  setTimeout(() => { toast.style.display = 'none'; }, 2500);
+}
+</script>
+</body>
+</html> 
